@@ -39,6 +39,8 @@ diffuseBuffer = new Buffer('diffuse', diffuseShaderObject.fragShaderCode());
 diffuseBuffer.init();
 forceBuffer = new Buffer('force', forceShaderObject.fragShaderCode());
 forceBuffer.init();
+divBuffer = new Buffer('div', divShaderObject.fragShaderCode());
+divBuffer.init();
 brushBuffer = new Buffer('brush', brushShaderObject.fragShaderCode());
 brushBuffer.init();
 postBuffer = new Buffer('post', postShaderObject.fragShaderCode());
@@ -48,6 +50,7 @@ postBuffer.init();
 //  - each field has two textures
 //  - these can be swapped out during rendering to propagate the results of one slab-ob to the next
 u = new Field('velocity');
+div_u = new Field('div(u)')
 p = new Field('pressure');
 x = new Field('ink'); // x is a quantity to be advected along the velocity field u
 
@@ -81,6 +84,12 @@ forceBuffer.material.uniforms.pos = {
 forceBuffer.material.uniforms.drag = {
 	type : "v3",
 	value : new THREE.Vector3(0.0, 0.0, 0.0)
+};
+
+divBuffer.material.uniforms.texInput.value = u.texA;
+divBuffer.material.uniforms.halfrdx.value = {
+	type : "f",
+	value : 0.5 / res.x
 };
 
 brushBuffer.material.uniforms.texInput.value = x.texA;
@@ -184,8 +193,16 @@ function updateVelocity(){
 	// ---- PROJECT -------------------------------------------------------------------------------------
 	//  * ---- COMPUTE PRESSURE 	
 	//     * - CALC. div(u)
-	
+	divBuffer.uniforms.texInput.valye = u.texA;
+	renderer.render(divBuffer.scene, camera, div_u.texA, true);
+
 	//     * - SOLVE POISSONS FOR P
+	for (var i = 0; i < PRESSURE_ITER_MAX; i++) {
+		diffuseBuffer.material.uniforms.texInput.value = p.texA;
+		diffuseBuffer.material.uniforms.b.value = div_u.texA;
+		renderer.render(diffuseBuffer.scene, camera, p.texB, true);	
+		p.swap();
+	}	
 	//  * ---- SUBTRACT grad(p)
 }
 
