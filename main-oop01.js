@@ -41,6 +41,8 @@ forceBuffer = new Buffer('force', forceShaderObject.fragShaderCode());
 forceBuffer.init();
 divBuffer = new Buffer('div', divShaderObject.fragShaderCode());
 divBuffer.init();
+gradBuffer = new Buffer('grad', gradShaderObject.fragShaderCode());
+gradBuffer.init();
 brushBuffer = new Buffer('brush', brushShaderObject.fragShaderCode());
 brushBuffer.init();
 postBuffer = new Buffer('post', postShaderObject.fragShaderCode());
@@ -100,6 +102,16 @@ forceBuffer.material.uniforms.drag = {
 
 divBuffer.material.uniforms.texInput.value = u.texA;
 divBuffer.material.uniforms.halfrdx = {
+	type : "f",
+	value : 0.5 / w()
+};
+
+gradBuffer.material.uniforms.texInput.value = u.texA;
+gradBuffer.material.uniforms.pressure = {
+	type : 't',
+	value : u.texA
+};
+gradBuffer.material.uniforms.halfrdx = {
 	type : "f",
 	value : 0.5 / w()
 };
@@ -189,17 +201,17 @@ function updateVelocity(){
 	advectBuffer.material.uniforms.res.value.y = h();
 
 	// ---- DIFFUSE -------------------------------------------------------------------------------------
-	jacobiBuffer.material.uniforms.alpha.value = alpha1();
-	jacobiBuffer.material.uniforms.rBeta.value = beta1();
-	for (var i = 0; i < DIFFUSE_ITER_MAX; i++) {
-		jacobiBuffer.material.uniforms.texInput.value = u.texA;
-		jacobiBuffer.material.uniforms.b.value = u.texA;
-		renderer.render(jacobiBuffer.scene, camera, u.texB, true);	
-		u.swap();
-	}	
+	// jacobiBuffer.material.uniforms.alpha.value = alpha1();
+	// jacobiBuffer.material.uniforms.rBeta.value = beta1();
+	// for (var i = 0; i < DIFFUSE_ITER_MAX; i++) {
+	// 	jacobiBuffer.material.uniforms.texInput.value = u.texA;
+	// 	jacobiBuffer.material.uniforms.b.value = u.texA;
+	// 	renderer.render(jacobiBuffer.scene, camera, u.texB, true);	
+	// 	u.swap();
+	// }	
 
-	jacobiBuffer.material.uniforms.res.value.x = w();
-	jacobiBuffer.material.uniforms.res.value.y = h();
+	// jacobiBuffer.material.uniforms.res.value.x = w();
+	// jacobiBuffer.material.uniforms.res.value.y = h();
 	
 	// ---- APPLY FORCES -------------------------------------------------------------------------------------
 	forceBuffer.material.uniforms.texInput.value = u.texA;
@@ -209,7 +221,7 @@ function updateVelocity(){
 	// ---- PROJECT -------------------------------------------------------------------------------------
 	//  * ---- COMPUTE PRESSURE 	
 	//     * - CALC. div(u)
-	divBuffer.uniforms.texInput.valye = u.texA;
+	divBuffer.uniforms.texInput.value = u.texA;
 	renderer.render(divBuffer.scene, camera, div_u.texA, true);
 
 	//     * - SOLVE POISSONS FOR P
@@ -221,7 +233,12 @@ function updateVelocity(){
 		renderer.render(jacobiBuffer.scene, camera, p.texB, true);	
 		p.swap();
 	}	
+	
 	//  * ---- SUBTRACT grad(p)
+	gradBuffer.uniforms.texInput.value = u.texA;
+	gradBuffer.uniforms.pressure.value = p.texA;
+	renderer.render(gradBuffer.scene, camera, u.texB, true);
+	u.swap();
 }
 
 // Uses updated velocity texture to correctly draw and displace any ink dropped into the fluid

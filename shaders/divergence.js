@@ -19,11 +19,11 @@ var divShaderObject = {
 				gl_FragColor = texture2D(texInput, uv);
 
 				// 1st order finite difference approximation to divergence
-	            float t = texture2D(texInput, (gl_FragCoord.xy+vec2(0.0, 1.0))/res).y;
-	            float b = texture2D(texInput, (gl_FragCoord.xy+vec2(0.0, -1.0))/res).y;
-	            float r = texture2D(texInput, (gl_FragCoord.xy+vec2(1.0, 0.0))/res).x;
-	            float l = texture2D(texInput, (gl_FragCoord.xy+vec2(-1.0, 0.0))/res).x;
-	            float div = halfrdx*(r - l + t - b);
+	            float t = texture2D(texInput, (gl_FragCoord.xy + vec2(0.0, 1.0)) / res).y;
+	            float b = texture2D(texInput, (gl_FragCoord.xy + vec2(0.0, -1.0)) / res).y;
+	            float r = texture2D(texInput, (gl_FragCoord.xy + vec2(1.0, 0.0)) / res).x;
+	            float l = texture2D(texInput, (gl_FragCoord.xy + vec2(-1.0, 0.0)) / res).x;
+	            float div = halfrdx * (r - l + t - b);
 	            
 	            gl_FragColor = vec4(div, 0, 0, 0);
 			}
