@@ -11,8 +11,8 @@ var brushShaderObject = {
 			uniform sampler2D texInput;
 			uniform vec3 pos; // position of the source of ink
 
-			const float radius = 50.0; // radius of ink blob
-			const float recipradius = 1.0/50.0;
+			const float radius = 25.0; // radius of ink blob
+			const float recipradius = 1.0/25.0;
 
 			void main(){			
 				// Normalise coords & read in texture

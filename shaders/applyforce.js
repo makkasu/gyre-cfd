@@ -14,9 +14,9 @@ var forceShaderObject = {
 			uniform vec3 pos; // position of the source of ink
 			uniform vec3 drag; // x : dx, y : dy, z : magnitude
 
-			const float rr = 1.0/50.0; // reciprocal of radius of ink blob
+			const float rr = 1.0/25.0; // reciprocal of radius of ink blob
 			const float dt = 0.016;
-			const float radius = 50.0;
+			const float radius = 25.0;
 
 			void main(){			
 				// Normalise coords & read in texture
