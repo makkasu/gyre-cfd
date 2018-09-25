@@ -182,8 +182,11 @@ function updateVelocity(){
 	u.swap();
 
 	// ---- PROJECT -------------------------------------------------------------------------------------
-	//  * ---- COMPUTE PRESSURE 
-	//  * ---- SUBTRACT GRAD P
+	//  * ---- COMPUTE PRESSURE 	
+	//     * - CALC. div(u)
+	
+	//     * - SOLVE POISSONS FOR P
+	//  * ---- SUBTRACT grad(p)
 }
 
 // Uses updated velocity texture to correctly draw and displace any ink dropped into the fluid
