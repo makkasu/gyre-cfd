@@ -9,7 +9,7 @@ Requirements:
  - 'shaders/' directory with GLSL shaders stored as js template literals
  - A browser capable of handling js template literals and OpenGL
 
-Max Potter 2018/03/28
+Max Potter 2018
 */
 
 var scene;
